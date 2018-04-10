@@ -30,3 +30,6 @@ Would output:
    <c></c>
 </mismatch>
 </comparison-result>
+
+This file will cause a stack over flow exception due to heavy recursion in an xslt debugger however will still run fine run using the standard
+microsoft engine.
