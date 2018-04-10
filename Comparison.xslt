@@ -115,9 +115,16 @@ xmlns:msxsl="urn:schemas-microsoft-com:xslt"
           </xsl:call-template>
         </xsl:variable>
         <xsl:if test="count(msxsl:node-set($attribute-mismatch)//attribute) = 0">
-          <match>
-            <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
-          </match>
+          <xsl:if test="(not($node1/text()[normalize-space()]) and not($node2/text()[normalize-space()])) or $node1/text()[normalize-space()] = $node2/text()[normalize-space()]">
+            <match>
+              <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
+            </match>                        
+          </xsl:if>
+          <xsl:if test="not((not($node1/text()[normalize-space()]) and not($node2/text()[normalize-space()])) or $node1/text()[normalize-space()] = $node2/text()[normalize-space()])">
+            <mismatch>
+              <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
+            </mismatch>
+          </xsl:if>
         </xsl:if>
         <xsl:if test="count(msxsl:node-set($attribute-mismatch)//attribute) > 0">
           <mismatch>
