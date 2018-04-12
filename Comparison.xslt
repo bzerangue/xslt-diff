@@ -1,12 +1,32 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <xsl:stylesheet version="1.0"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:msxsl="urn:schemas-microsoft-com:xslt"
   >
   <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
-  <xsl:variable name="file2" select="document('C:\Users\320003708\Desktop\testbed\working\b.xml')" />
+  <xsl:variable name="file2" select="document('C:\TFS\Encore Utilities\ConfigurationTransformer\ConfigurationTransform.Comparison.Test\NewLineText\righthand.xml')" />
   <xsl:template match="comment()"/>
+ <xsl:template name="string-replace-all">
+    <xsl:param name="text" />
+    <xsl:param name="replace" />
+    <xsl:param name="by" />
+    <xsl:choose>
+      <xsl:when test="contains($text, $replace)">
+        <xsl:value-of select="substring-before($text,$replace)" />
+        <xsl:value-of select="$by" />
+        <xsl:call-template name="string-replace-all">
+          <xsl:with-param name="text"
+          select="substring-after($text,$replace)" />
+          <xsl:with-param name="replace" select="$replace" />
+          <xsl:with-param name="by" select="$by" />
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$text" />
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
   <!-- Entry point into transform: file loading and processing occurs here -->
   <xsl:template  match="/">
     <xsl:variable name="IDs2" select="$file2/." />
@@ -115,12 +135,12 @@ xmlns:msxsl="urn:schemas-microsoft-com:xslt"
           </xsl:call-template>
         </xsl:variable>
         <xsl:if test="count(msxsl:node-set($attribute-mismatch)//attribute) = 0">
-          <xsl:if test="(not($node1/text()[normalize-space()]) and not($node2/text()[normalize-space()])) or $node1/text()[normalize-space()] = $node2/text()[normalize-space()]">
+          <xsl:if test="(not(msxsl:node-set(translate(normalize-space($node1/text()),'&#xa;', ''))) and not(msxsl:node-set(translate(normalize-space($node2/text()),'&#xa;', '')))) or (translate(normalize-space($node1/text()),'&#xa;', '') = translate(normalize-space($node2/text()),'&#xa;', ''))">
             <match>
               <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
             </match>                        
           </xsl:if>
-          <xsl:if test="not((not($node1/text()[normalize-space()]) and not($node2/text()[normalize-space()])) or $node1/text()[normalize-space()] = $node2/text()[normalize-space()])">
+          <xsl:if test="not(not(msxsl:node-set(translate(normalize-space($node1/text()),'&#xa;', ''))) and not(msxsl:node-set(translate(normalize-space($node2/text()),'&#xa;', '')))) or (translate(normalize-space($node1/text()),'&#xa;', '') = translate(normalize-space($node2/text()),'&#xa;', ''))">
             <mismatch>
               <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
             </mismatch>
