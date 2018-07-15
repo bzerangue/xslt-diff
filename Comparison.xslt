@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 
 <xsl:stylesheet version="1.0"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:msxsl="urn:schemas-microsoft-com:xslt"
   >
   <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
-  <xsl:variable name="file2" select="document('C:\TFS\Encore Utilities\ConfigurationTransformer\ConfigurationTransform.Comparison.Test\NewLineText\righthand.xml')" />
+  <xsl:variable name="file2" select="document('C:\TFS\Encore Utilities\ConfigurationComparisonLeafy\ConfigurationTransform.Comparison.Test\LiveComparison\righthand.xml')" />
   <xsl:template match="comment()"/>
  <xsl:template name="string-replace-all">
     <xsl:param name="text" />
@@ -89,11 +89,52 @@ xmlns:msxsl="urn:schemas-microsoft-com:xslt"
           </xsl:call-template>
           </xsl:variable>
           <!-- recurse to next node in branch with excluding nodes that were matched -->
+        <xsl:variable name="oCount" select="count(msxsl:node-set($tree[1])/following-sibling::*)"></xsl:variable>
+        <xsl:variable name="Range1">
+          <xsl:call-template name="Range">
+            <xsl:with-param name="Array" select="msxsl:node-set($tree[1])/following-sibling::*"/>
+            <xsl:with-param name="StartIndex" select="0"/>
+            <xsl:with-param name="EndIndex" select="$oCount div 3"/>
+          </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="Range2">
+          <xsl:call-template name="Range">
+            <xsl:with-param name="Array" select="msxsl:node-set($tree[1])/following-sibling::*"/>
+            <xsl:with-param name="StartIndex" select="$oCount div 3"/>
+            <xsl:with-param name="EndIndex" select="$oCount * 2 div 3"/>
+          </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="Range3">
+          <xsl:call-template name="Range">
+            <xsl:with-param name="Array" select="msxsl:node-set($tree[1])/following-sibling::*"/>
+            <xsl:with-param name="StartIndex" select="$oCount * 2 div 3"/>
+            <xsl:with-param name="EndIndex" select="$oCount"/>
+          </xsl:call-template>
+        </xsl:variable>
+        <xsl:if test="not($oCount > 6)">
           <xsl:call-template name="splitter">
-          <xsl:with-param name="tree" select="msxsl:node-set($tree[1])/following-sibling::*"></xsl:with-param>
-          <xsl:with-param name="comparer" select="msxsl:node-set($removeMatch)/sub-tree/*"></xsl:with-param>
-          <xsl:with-param name="comparer-original" select="msxsl:node-set($removeMatch)/sub-tree/*"/>
-        </xsl:call-template>
+            <xsl:with-param name="tree" select="msxsl:node-set($tree[1])/following-sibling::*"></xsl:with-param>
+            <xsl:with-param name="comparer" select="msxsl:node-set($removeMatch)/sub-tree/*"></xsl:with-param>
+            <xsl:with-param name="comparer-original" select="msxsl:node-set($removeMatch)/sub-tree/*"/>
+          </xsl:call-template>
+        </xsl:if>
+        <xsl:if test="$oCount > 6">
+          <xsl:call-template name="splitter">
+            <xsl:with-param name="tree" select="msxsl:node-set($Range1)/root/*"></xsl:with-param>
+            <xsl:with-param name="comparer" select="msxsl:node-set($removeMatch)/sub-tree/*"></xsl:with-param>
+            <xsl:with-param name="comparer-original" select="msxsl:node-set($removeMatch)/sub-tree/*"/>
+          </xsl:call-template>
+          <xsl:call-template name="splitter">
+            <xsl:with-param name="tree" select="msxsl:node-set($Range2)/root/*"></xsl:with-param>
+            <xsl:with-param name="comparer" select="msxsl:node-set($removeMatch)/sub-tree/*"></xsl:with-param>
+            <xsl:with-param name="comparer-original" select="msxsl:node-set($removeMatch)/sub-tree/*"/>
+          </xsl:call-template>
+          <xsl:call-template name="splitter">
+            <xsl:with-param name="tree" select="msxsl:node-set($Range3)/root/*"></xsl:with-param>
+            <xsl:with-param name="comparer" select="msxsl:node-set($removeMatch)/sub-tree/*"></xsl:with-param>
+            <xsl:with-param name="comparer-original" select="msxsl:node-set($removeMatch)/sub-tree/*"/>
+          </xsl:call-template>
+        </xsl:if>
         <match>
           <xsl:copy-of select="$tree[1]"></xsl:copy-of>
         </match>
@@ -113,15 +154,64 @@ xmlns:msxsl="urn:schemas-microsoft-com:xslt"
             <xsl:copy-of select="msxsl:node-set($tree[1])"></xsl:copy-of>
           </mismatch>
         </orphan>
+        <xsl:variable name="oCount" select="count(msxsl:node-set($tree[1])/following-sibling::*)"></xsl:variable>
+        <xsl:variable name="Range1">
+          <xsl:call-template name="Range">
+            <xsl:with-param name="Array" select="msxsl:node-set($tree[1])/following-sibling::*"/>
+            <xsl:with-param name="StartIndex" select="0"/>
+            <xsl:with-param name="EndIndex" select="$oCount div 3"/>
+          </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="Range2">
+          <xsl:call-template name="Range">
+            <xsl:with-param name="Array" select="msxsl:node-set($tree[1])/following-sibling::*"/>
+            <xsl:with-param name="StartIndex" select="$oCount div 3"/>
+            <xsl:with-param name="EndIndex" select="$oCount * 2 div 3"/>
+          </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="Range3">
+          <xsl:call-template name="Range">
+            <xsl:with-param name="Array" select="msxsl:node-set($tree[1])/following-sibling::*"/>
+            <xsl:with-param name="StartIndex" select="$oCount * 2 div 3"/>
+            <xsl:with-param name="EndIndex" select="$oCount"/>
+          </xsl:call-template>
+        </xsl:variable>
         <xsl:if test="msxsl:node-set($tree[1])/following-sibling::*">
-        <xsl:call-template name="splitter">
-          <xsl:with-param name="tree" select="msxsl:node-set($tree[1])/following-sibling::*"></xsl:with-param>
-          <xsl:with-param name="comparer" select="msxsl:node-set($comparer-original)"></xsl:with-param>
-          <xsl:with-param name="comparer-original" select="msxsl:node-set($comparer-original)"/>
-        </xsl:call-template>
+          <xsl:if test="not($oCount > 6)">
+            <xsl:call-template name="splitter">
+              <xsl:with-param name="tree" select="msxsl:node-set($tree[1])/following-sibling::*"></xsl:with-param>
+              <xsl:with-param name="comparer" select="msxsl:node-set($comparer-original)"></xsl:with-param>
+              <xsl:with-param name="comparer-original" select="msxsl:node-set($comparer-original)"/>
+            </xsl:call-template>
+          </xsl:if>
+          <xsl:if test="$oCount > 6">
+            <xsl:call-template name="splitter">
+              <xsl:with-param name="tree" select="msxsl:node-set($Range1)/root/*"></xsl:with-param>
+              <xsl:with-param name="comparer" select="msxsl:node-set($comparer-original)"></xsl:with-param>
+              <xsl:with-param name="comparer-original" select="msxsl:node-set($comparer-original)"/>
+            </xsl:call-template>
+            <xsl:call-template name="splitter">
+              <xsl:with-param name="tree" select="msxsl:node-set($Range2)/root/*"></xsl:with-param>
+              <xsl:with-param name="comparer" select="msxsl:node-set($comparer-original)"></xsl:with-param>
+              <xsl:with-param name="comparer-original" select="msxsl:node-set($comparer-original)"/>
+            </xsl:call-template>
+            <xsl:call-template name="splitter">
+              <xsl:with-param name="tree" select="msxsl:node-set($Range3)/root/*"></xsl:with-param>
+              <xsl:with-param name="comparer" select="msxsl:node-set($comparer-original)"></xsl:with-param>
+              <xsl:with-param name="comparer-original" select="msxsl:node-set($comparer-original)"/>
+            </xsl:call-template>
+          </xsl:if>
         </xsl:if>
       </xsl:if>
     </compare-result>
+  </xsl:template>
+  <xsl:template name="Range">
+    <xsl:param name="Array" />
+    <xsl:param name="StartIndex"/>
+    <xsl:param name="EndIndex"/>
+    <root>
+      <xsl:copy-of select="$Array[position() > $StartIndex and not(position() > $EndIndex)]" />
+    </root>
   </xsl:template>
   <!-- sub function for matching single nodes -->
   <xsl:template name="match-node">
