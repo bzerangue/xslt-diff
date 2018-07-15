@@ -5,7 +5,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:msxsl="urn:schemas-microsoft-com:xslt"
   >
   <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
-  <xsl:variable name="file2" select="document('C:\Resources.2sv.resx')" />
+  <xsl:variable name="file2" select="document('C:\Resources.2sv.resx.xml')" />
   <xsl:template match="comment()"/>
   <!-- Entry point into transform: file loading and processing occurs here -->
   <xsl:template  match="/">
@@ -15,16 +15,6 @@ xmlns:msxsl="urn:schemas-microsoft-com:xslt"
           <xsl:with-param name="tree" select="*"/>
           <xsl:with-param name="comparer" select="$IDs2/*"></xsl:with-param>
           <xsl:with-param name="comparer-original" select="$IDs2/*"></xsl:with-param>
-        </xsl:call-template>
-        </xsl:variable>
-    <xsl:variable name="output-remove">
-      <compare-result>
-        <xsl:copy-of select="msxsl:node-set($output)//mismatch"/>
-      </compare-result>
-    </xsl:variable>
-        <xsl:variable name="output2">
-        <xsl:call-template name="remove-duplicates">
-          <xsl:with-param name="zen" select="msxsl:node-set(output-remove)"></xsl:with-param>
         </xsl:call-template>
         </xsl:variable>
     <root>
@@ -261,40 +251,6 @@ xmlns:msxsl="urn:schemas-microsoft-com:xslt"
         </xsl:for-each>
       </xsl:if>
     </attribute-match>
-  </xsl:template>
-  <!-- unimplemented but to be used to filter duplication of recursed mis-matches post processing -->
-  <xsl:template name="remove-duplicates">
-    <xsl:param name="zen"></xsl:param>
-    <xsl:if test="$zen/*[1]/following-sibling::*">
-      <xsl:variable name="zen2">
-        <xsl:call-template name="remove-duplicates">
-          <xsl:with-param name="zen" select="$zen/*[1]/following-sibling::*"/>
-        </xsl:call-template>
-      </xsl:variable>
-      <compare-result>
-        <xsl:for-each select="msxsl:node-set($zen2)/*">
-          <xsl:variable name="attribute-mismatch">
-            <xsl:call-template name="attribute-value-mismatch">
-              <xsl:with-param name="attributes1" select="msxsl:node-set(.)/@*"></xsl:with-param>
-              <xsl:with-param name="attributes2" select="msxsl:node-set($zen/*[1])/@*"></xsl:with-param>
-            </xsl:call-template>
-          </xsl:variable>
-          <xsl:if test="count(msxsl:node-set($attribute-mismatch)/attribute-match/attribute) > 0">
-            <xsl:copy>
-              <xsl:copy-of select="./@*" />
-            </xsl:copy>
-          </xsl:if>
-        </xsl:for-each>
-        <xsl:copy>
-          <xsl:copy-of select="$zen[1]"/>
-        </xsl:copy>
-      </compare-result>
-    </xsl:if>
-    <xsl:if test="not($zen[1]/following-sibling::*)">
-      <compare-result>
-        <xsl:copy-of select="$zen[1]"/>
-      </compare-result>
-    </xsl:if>
   </xsl:template>
   <!-- sub function: exclude node from branch -->
   <xsl:template name="excludeNodeFromTree">
