@@ -5,28 +5,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:msxsl="urn:schemas-microsoft-com:xslt"
   >
   <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
-  <xsl:variable name="file2" select="document('C:\TFS\Encore Utilities\ConfigurationComparisonLeafy\ConfigurationTransform.Comparison.Test\LiveComparison\righthand.xml')" />
+  <xsl:variable name="file2" select="document('C:\Resources.2sv.resx')" />
   <xsl:template match="comment()"/>
- <xsl:template name="string-replace-all">
-    <xsl:param name="text" />
-    <xsl:param name="replace" />
-    <xsl:param name="by" />
-    <xsl:choose>
-      <xsl:when test="contains($text, $replace)">
-        <xsl:value-of select="substring-before($text,$replace)" />
-        <xsl:value-of select="$by" />
-        <xsl:call-template name="string-replace-all">
-          <xsl:with-param name="text"
-          select="substring-after($text,$replace)" />
-          <xsl:with-param name="replace" select="$replace" />
-          <xsl:with-param name="by" select="$by" />
-        </xsl:call-template>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="$text" />
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
   <!-- Entry point into transform: file loading and processing occurs here -->
   <xsl:template  match="/">
     <xsl:variable name="IDs2" select="$file2/." />
@@ -55,6 +35,8 @@ xmlns:msxsl="urn:schemas-microsoft-com:xslt"
   <xsl:template name="splitter" >
     <xsl:param name="comparer"/>
     <xsl:param name="tree"/>
+    <xsl:param name="tree2"/>
+    <xsl:param name="tree3"/>
     <xsl:param name="comparer-original"/>
     <compare-result>
       <xsl:variable name="current-comparison">
