@@ -5,7 +5,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:msxsl="urn:schemas-microsoft-com:xslt"
   >
   <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
-  <xsl:variable name="file2" select="document('C:\TFS\Encore Utilities\ConfigurationComparisonLeafy\ConfigurationTransform.Comparison.Test\LiveComparison\righthand.xml')" />
+  <xsl:variable name="file2" select="document('C:\example.xml')" />
   <xsl:template match="comment()"/>
   <xsl:template name="string-replace-all">
     <xsl:param name="text" />
