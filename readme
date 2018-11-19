@@ -11,7 +11,7 @@ input.xml
    <a test="test"></a>
    <b></b>
    <c></c>
-<root>
+</root>
 
 b.xml
 <root>
