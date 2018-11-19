@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <xsl:stylesheet version="1.0"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-xmlns:msxsl="urn:schemas-microsoft-com:xslt"
 xmlns:exsl="http://exslt.org/common"
 extension-element-prefixes="exsl"
   >
   <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
   <xsl:variable name="file2" select="document('b.xml')" />
   <xsl:template match="comment()"/>
-  <xsl:template name="string-replace-all">
+ <xsl:template name="string-replace-all">
     <xsl:param name="text" />
     <xsl:param name="replace" />
     <xsl:param name="by" />
@@ -31,25 +31,25 @@ extension-element-prefixes="exsl"
   <!-- Entry point into transform: file loading and processing occurs here -->
   <xsl:template  match="/">
     <xsl:variable name="IDs2" select="$file2/." />
-    <xsl:variable name="output">
-      <xsl:call-template name="splitter">
-        <xsl:with-param name="tree" select="*"/>
-        <xsl:with-param name="comparer" select="$IDs2/*"></xsl:with-param>
-        <xsl:with-param name="comparer-original" select="$IDs2/*"></xsl:with-param>
-      </xsl:call-template>
-    </xsl:variable>
+        <xsl:variable name="output">
+          <xsl:call-template name="splitter">
+          <xsl:with-param name="tree" select="*"/>
+          <xsl:with-param name="comparer" select="$IDs2/*"></xsl:with-param>
+          <xsl:with-param name="comparer-original" select="$IDs2/*"></xsl:with-param>
+        </xsl:call-template>
+        </xsl:variable>
     <xsl:variable name="output-remove">
       <compare-result>
         <xsl:copy-of select="exsl:node-set($output)//mismatch"/>
       </compare-result>
     </xsl:variable>
-    <xsl:variable name="output2">
-      <xsl:call-template name="remove-duplicates">
-        <xsl:with-param name="zen" select="exsl:node-set(output-remove)"></xsl:with-param>
-      </xsl:call-template>
-    </xsl:variable>
+        <xsl:variable name="output2">
+        <xsl:call-template name="remove-duplicates">
+          <xsl:with-param name="zen" select="exsl:node-set(output-remove)"></xsl:with-param>
+        </xsl:call-template>
+        </xsl:variable>
     <root>
-      <xsl:copy-of select="exsl:node-set($output)"/>
+        <xsl:copy-of select="exsl:node-set($output)"/>
     </root>
   </xsl:template>
   <!-- Main recursive looping algorithm through nodes or leaves in current branch -->
@@ -83,59 +83,18 @@ extension-element-prefixes="exsl"
       </xsl:if>
       <!-- loop to next node comparison -->
       <xsl:if test="exsl:node-set($current-comparison)//match and exsl:node-set($tree)[1]/following-sibling::*">
-        <xsl:variable name="removeMatch">
+          <xsl:variable name="removeMatch">
           <xsl:call-template name="excludeNodeFromTree">
-            <xsl:with-param name="node" select="exsl:node-set($tree[1])"></xsl:with-param>
-            <xsl:with-param name="branch-layer" select="exsl:node-set($comparer-original)"/>
+              <xsl:with-param name="node" select="exsl:node-set($tree[1])"></xsl:with-param>
+              <xsl:with-param name="branch-layer" select="exsl:node-set($comparer-original)"/>
           </xsl:call-template>
-        </xsl:variable>
-        <!-- recurse to next node in branch with excluding nodes that were matched -->
-        <xsl:variable name="oCount" select="count(exsl:node-set($tree[1])/following-sibling::*)"></xsl:variable>
-        <xsl:variable name="Range1">
-          <xsl:call-template name="Range">
-            <xsl:with-param name="Array" select="exsl:node-set($tree[1])/following-sibling::*"/>
-            <xsl:with-param name="StartIndex" select="0"/>
-            <xsl:with-param name="EndIndex" select="$oCount div 3"/>
-          </xsl:call-template>
-        </xsl:variable>
-        <xsl:variable name="Range2">
-          <xsl:call-template name="Range">
-            <xsl:with-param name="Array" select="exsl:node-set($tree[1])/following-sibling::*"/>
-            <xsl:with-param name="StartIndex" select="$oCount div 3"/>
-            <xsl:with-param name="EndIndex" select="$oCount * 2 div 3"/>
-          </xsl:call-template>
-        </xsl:variable>
-        <xsl:variable name="Range3">
-          <xsl:call-template name="Range">
-            <xsl:with-param name="Array" select="exsl:node-set($tree[1])/following-sibling::*"/>
-            <xsl:with-param name="StartIndex" select="$oCount * 2 div 3"/>
-            <xsl:with-param name="EndIndex" select="$oCount"/>
-          </xsl:call-template>
-        </xsl:variable>
-        <xsl:if test="not($oCount > 6)">
+          </xsl:variable>
+          <!-- recurse to next node in branch with excluding nodes that were matched -->
           <xsl:call-template name="splitter">
-            <xsl:with-param name="tree" select="exsl:node-set($tree[1])/following-sibling::*"></xsl:with-param>
-            <xsl:with-param name="comparer" select="exsl:node-set($removeMatch)/sub-tree/*"></xsl:with-param>
-            <xsl:with-param name="comparer-original" select="exsl:node-set($removeMatch)/sub-tree/*"/>
-          </xsl:call-template>
-        </xsl:if>
-        <xsl:if test="$oCount > 6">
-          <xsl:call-template name="splitter">
-            <xsl:with-param name="tree" select="exsl:node-set($Range1)/root/*"></xsl:with-param>
-            <xsl:with-param name="comparer" select="exsl:node-set($removeMatch)/sub-tree/*"></xsl:with-param>
-            <xsl:with-param name="comparer-original" select="exsl:node-set($removeMatch)/sub-tree/*"/>
-          </xsl:call-template>
-          <xsl:call-template name="splitter">
-            <xsl:with-param name="tree" select="exsl:node-set($Range2)/root/*"></xsl:with-param>
-            <xsl:with-param name="comparer" select="exsl:node-set($removeMatch)/sub-tree/*"></xsl:with-param>
-            <xsl:with-param name="comparer-original" select="exsl:node-set($removeMatch)/sub-tree/*"/>
-          </xsl:call-template>
-          <xsl:call-template name="splitter">
-            <xsl:with-param name="tree" select="exsl:node-set($Range3)/root/*"></xsl:with-param>
-            <xsl:with-param name="comparer" select="exsl:node-set($removeMatch)/sub-tree/*"></xsl:with-param>
-            <xsl:with-param name="comparer-original" select="exsl:node-set($removeMatch)/sub-tree/*"/>
-          </xsl:call-template>
-        </xsl:if>
+          <xsl:with-param name="tree" select="exsl:node-set($tree[1])/following-sibling::*"></xsl:with-param>
+          <xsl:with-param name="comparer" select="exsl:node-set($removeMatch)/sub-tree/*"></xsl:with-param>
+          <xsl:with-param name="comparer-original" select="exsl:node-set($removeMatch)/sub-tree/*"/>
+        </xsl:call-template>
         <match>
           <xsl:copy-of select="$tree[1]"></xsl:copy-of>
         </match>
@@ -156,56 +115,48 @@ extension-element-prefixes="exsl"
           </mismatch>
         </orphan>
         <xsl:if test="exsl:node-set($tree[1])/following-sibling::*">
-          <xsl:call-template name="splitter">
-            <xsl:with-param name="tree" select="exsl:node-set($tree[1])/following-sibling::*"></xsl:with-param>
-            <xsl:with-param name="comparer" select="exsl:node-set($comparer-original)"></xsl:with-param>
-            <xsl:with-param name="comparer-original" select="exsl:node-set($comparer-original)"/>
-          </xsl:call-template>
+        <xsl:call-template name="splitter">
+          <xsl:with-param name="tree" select="exsl:node-set($tree[1])/following-sibling::*"></xsl:with-param>
+          <xsl:with-param name="comparer" select="exsl:node-set($comparer-original)"></xsl:with-param>
+          <xsl:with-param name="comparer-original" select="exsl:node-set($comparer-original)"/>
+        </xsl:call-template>
         </xsl:if>
       </xsl:if>
     </compare-result>
-  </xsl:template>
-  <xsl:template name="Range">
-    <xsl:param name="Array" />
-    <xsl:param name="StartIndex"/>
-    <xsl:param name="EndIndex"/>
-    <root>
-      <xsl:copy-of select="$Array[position() > $StartIndex and not(position() > $EndIndex)]" />
-    </root>
   </xsl:template>
   <!-- sub function for matching single nodes -->
   <xsl:template name="match-node">
     <xsl:param name="node1"></xsl:param>
     <xsl:param name="node2"></xsl:param>
     <xsl:if test="name($node1) = name($node2)">
-      <xsl:variable name="attribute-mismatch">
-        <xsl:call-template name="attribute-value-mismatch">
-          <xsl:with-param name="attributes1" select="$node1/@*"></xsl:with-param>
-          <xsl:with-param name="attributes2" select="$node2/@*"></xsl:with-param>
-        </xsl:call-template>
-      </xsl:variable>
-      <xsl:if test="count(exsl:node-set($attribute-mismatch)//attribute) = 0">
-        <xsl:if test="(not(exsl:node-set(translate(normalize-space($node1/text()),'&#xa;', ''))) and not(exsl:node-set(translate(normalize-space($node2/text()),'&#xa;', '')))) or (translate(normalize-space($node1/text()),'&#xa;', '') = translate(normalize-space($node2/text()),'&#xa;', ''))">
-          <match>
-            <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
-          </match>
+        <xsl:variable name="attribute-mismatch">
+          <xsl:call-template name="attribute-value-mismatch">
+            <xsl:with-param name="attributes1" select="$node1/@*"></xsl:with-param>
+            <xsl:with-param name="attributes2" select="$node2/@*"></xsl:with-param>
+          </xsl:call-template>
+        </xsl:variable>
+        <xsl:if test="count(exsl:node-set($attribute-mismatch)//attribute) = 0">
+          <xsl:if test="(not(exsl:node-set(translate(normalize-space($node1/text()),'&#xa;', ''))) and not(exsl:node-set(translate(normalize-space($node2/text()),'&#xa;', '')))) or (translate(normalize-space($node1/text()),'&#xa;', '') = translate(normalize-space($node2/text()),'&#xa;', ''))">
+            <match>
+              <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
+            </match>                        
+          </xsl:if>
+          <xsl:if test="not(not(exsl:node-set(translate(normalize-space($node1/text()),'&#xa;', ''))) and not(exsl:node-set(translate(normalize-space($node2/text()),'&#xa;', '')))) or (translate(normalize-space($node1/text()),'&#xa;', '') = translate(normalize-space($node2/text()),'&#xa;', ''))">
+            <mismatch>
+              <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
+            </mismatch>
+          </xsl:if>
         </xsl:if>
-        <xsl:if test="not(not(exsl:node-set(translate(normalize-space($node1/text()),'&#xa;', ''))) and not(exsl:node-set(translate(normalize-space($node2/text()),'&#xa;', '')))) or (translate(normalize-space($node1/text()),'&#xa;', '') = translate(normalize-space($node2/text()),'&#xa;', ''))">
+        <xsl:if test="count(exsl:node-set($attribute-mismatch)//attribute) > 0">
           <mismatch>
             <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
           </mismatch>
         </xsl:if>
-      </xsl:if>
-      <xsl:if test="count(exsl:node-set($attribute-mismatch)//attribute) > 0">
-        <mismatch>
-          <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
-        </mismatch>
-      </xsl:if>
     </xsl:if>
     <xsl:if test="name($node1) != name($node2)">
       <mismatch>
         <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
-      </mismatch>
+      </mismatch>      
     </xsl:if>
   </xsl:template>
   <!-- sub function for matching attributes in two nodes - outputs an attribute node only when an attibute mismatches -->
