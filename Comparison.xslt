@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <xsl:stylesheet version="1.0"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:exsl="http://exslt.org/common"
@@ -8,26 +7,6 @@ extension-element-prefixes="exsl"
   <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
   <xsl:variable name="file2" select="document('b.xml')" />
   <xsl:template match="comment()"/>
- <xsl:template name="string-replace-all">
-    <xsl:param name="text" />
-    <xsl:param name="replace" />
-    <xsl:param name="by" />
-    <xsl:choose>
-      <xsl:when test="contains($text, $replace)">
-        <xsl:value-of select="substring-before($text,$replace)" />
-        <xsl:value-of select="$by" />
-        <xsl:call-template name="string-replace-all">
-          <xsl:with-param name="text"
-          select="substring-after($text,$replace)" />
-          <xsl:with-param name="replace" select="$replace" />
-          <xsl:with-param name="by" select="$by" />
-        </xsl:call-template>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="$text" />
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
   <!-- Entry point into transform: file loading and processing occurs here -->
   <xsl:template  match="/">
     <xsl:variable name="IDs2" select="$file2/." />
@@ -43,11 +22,6 @@ extension-element-prefixes="exsl"
         <xsl:copy-of select="exsl:node-set($output)//mismatch"/>
       </compare-result>
     </xsl:variable>
-        <xsl:variable name="output2">
-        <xsl:call-template name="remove-duplicates">
-          <xsl:with-param name="zen" select="exsl:node-set(output-remove)"></xsl:with-param>
-        </xsl:call-template>
-        </xsl:variable>
     <root>
         <xsl:copy-of select="exsl:node-set($output)"/>
     </root>
@@ -190,40 +164,6 @@ extension-element-prefixes="exsl"
         </xsl:for-each>
       </xsl:if>
     </attribute-match>
-  </xsl:template>
-  <!-- unimplemented but to be used to filter duplication of recursed mis-matches post processing -->
-  <xsl:template name="remove-duplicates">
-    <xsl:param name="zen"></xsl:param>
-    <xsl:if test="$zen/*[1]/following-sibling::*">
-      <xsl:variable name="zen2">
-        <xsl:call-template name="remove-duplicates">
-          <xsl:with-param name="zen" select="$zen/*[1]/following-sibling::*"/>
-        </xsl:call-template>
-      </xsl:variable>
-      <compare-result>
-        <xsl:for-each select="exsl:node-set($zen2)/*">
-          <xsl:variable name="attribute-mismatch">
-            <xsl:call-template name="attribute-value-mismatch">
-              <xsl:with-param name="attributes1" select="exsl:node-set(.)/@*"></xsl:with-param>
-              <xsl:with-param name="attributes2" select="exsl:node-set($zen/*[1])/@*"></xsl:with-param>
-            </xsl:call-template>
-          </xsl:variable>
-          <xsl:if test="count(exsl:node-set($attribute-mismatch)/attribute-match/attribute) > 0">
-            <xsl:copy>
-              <xsl:copy-of select="./@*" />
-            </xsl:copy>
-          </xsl:if>
-        </xsl:for-each>
-        <xsl:copy>
-          <xsl:copy-of select="$zen[1]"/>
-        </xsl:copy>
-      </compare-result>
-    </xsl:if>
-    <xsl:if test="not($zen[1]/following-sibling::*)">
-      <compare-result>
-        <xsl:copy-of select="$zen[1]"/>
-      </compare-result>
-    </xsl:if>
   </xsl:template>
   <!-- sub function: exclude node from branch -->
   <xsl:template name="excludeNodeFromTree">
