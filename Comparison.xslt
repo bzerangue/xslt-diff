@@ -85,7 +85,7 @@ extension-element-prefixes="exsl"
         <!-- mismatched nodes in current branch are detected as orphaned here -->
         <orphan>
           <mismatch>
-            <xsl:copy-of select="exsl:node-set($tree[1])"></xsl:copy-of>
+        <xsl:apply-templates mode="copy-no-namespaces" select="exsl:node-set($tree[1])" />
           </mismatch>
         </orphan>
         <xsl:if test="exsl:node-set($tree[1])/following-sibling::*">
@@ -117,19 +117,19 @@ extension-element-prefixes="exsl"
           </xsl:if>
           <xsl:if test="not(not(exsl:node-set(translate(normalize-space($node1/text()),'&#xa;', ''))) and not(exsl:node-set(translate(normalize-space($node2/text()),'&#xa;', '')))) or (translate(normalize-space($node1/text()),'&#xa;', '') = translate(normalize-space($node2/text()),'&#xa;', ''))">
             <mismatch>
-              <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
+        <xsl:apply-templates mode="copy-no-namespaces" select="$node1 | @*" />
             </mismatch>
           </xsl:if>
         </xsl:if>
         <xsl:if test="count(exsl:node-set($attribute-mismatch)//attribute) > 0">
           <mismatch>
-            <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
+        <xsl:apply-templates mode="copy-no-namespaces" select="$node1 | @*" />
           </mismatch>
         </xsl:if>
     </xsl:if>
     <xsl:if test="name($node1) != name($node2)">
       <mismatch>
-        <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
+        <xsl:apply-templates mode="copy-no-namespaces" select="$node1 | @*" />
       </mismatch>      
     </xsl:if>
   </xsl:template>
@@ -204,4 +204,13 @@ extension-element-prefixes="exsl"
       </sub-tree>
     </xsl:if>
   </xsl:template>
+<xsl:template match="*" mode="copy-no-namespaces">
+    <xsl:element name="{local-name()}">
+        <xsl:copy-of select="@*"/>
+        <xsl:apply-templates select="node()" mode="copy-no-namespaces"/>
+    </xsl:element>
+</xsl:template>
+<xsl:template match="comment()| processing-instruction()" mode="copy-no-namespaces">
+    <xsl:copy/>
+</xsl:template>
 </xsl:stylesheet>
