@@ -1,5 +1,7 @@
+original work done by: https://github.com/sflynn1812/xslt-diff
+
 This is an XSLT comparison script that compares the variable file b.xml with the input xml and outputs the difference using XSLT
-1.0 in an microsoft standard.
+1.0 in an exslt standard.
 I have designed this as an orderless comparison with node rearrangement in the
 parent not being regarded as a difference.
 
