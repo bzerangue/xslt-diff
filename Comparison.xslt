@@ -5,7 +5,9 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:exsl="http://exslt.org/common"
 extension-element-prefixes="exsl">
   <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
-  <xsl:variable name="file2" select="document('C:\TFS\Encore Utilities\ConfigurationTransformer\ConfigurationTransform.Comparison.Test\NewLineText\righthand.xml')" />
+  <!-- Make sure to add file path and file in the variable file2path -->
+  <xsl:variable name="file2path" select="''"/>
+  <xsl:variable name="file2" select="document($file2path)" />
   <xsl:template match="comment()"/>
  <xsl:template name="string-replace-all">
     <xsl:param name="text" />
