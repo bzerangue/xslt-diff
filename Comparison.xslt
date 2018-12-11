@@ -6,7 +6,7 @@ xmlns:exsl="http://exslt.org/common"
 extension-element-prefixes="exsl">
   <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
   <!-- Make sure to add file path and file in the variable file2path -->
-  <xsl:variable name="file2path" select="''"/>
+  <xsl:variable name="file2path" select="'bigfiles/people2.xml'"/>
   <xsl:variable name="file2" select="document($file2path)" />
   <xsl:template match="comment()"/>
  <xsl:template name="string-replace-all">
