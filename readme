@@ -1,3 +1,6 @@
+
+## Currently Not Working - suffers from an Infinite loop.
+
 original work done by: https://github.com/sflynn1812/xslt-diff
 
 This is an XSLT comparison script that compares the variable file b.xml with the input xml and outputs the difference using XSLT
